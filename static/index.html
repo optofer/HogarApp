@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <title>Control de GPIOs y Sensores</title>
+  <style>
+    body { background-color: #ffcc00; color: blue; margin: 20px; }
+    .container { margin-top: 30px; }
+    .btn { width: 100%; }
+    img { max-height: 500px; object-fit: cover; background-color: green; opacity: 0.3;border: 1px solid black; }      
+   h6 {
+     text-align: center;
+   }
+   #foot{
+     text-align: center;
+     padding-bottom: 50px;
+   }
+  #cameraCarousel{
+       display:flex;
+       justify-content: center;
+        width: 3200;
+       height: 240;
+       margin: auto;
+       border: 3px solid #2c3e50;
+       border-radius: 10px;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+       overflow: hidden;
+  }
+
+   .camera-frame{
+    display:flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+  }
+  .camera-frame iframe {
+  width: 100%;
+  height: 250px;
+  aspect-ratio: 4 / 3;
+  max-width: 1200px;
+  border: none;
+}
+
+#cam-img {
+  image-rendering: auto;
+  width: 320px;
+  height: 240px;
+  object-fit: contain;
+  border: 1px solid #ccc;
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class='navbar navbar-expand-sm navbar-dark bg-dark'>
+  <div class='container-fluid'>
+    <a class='navbar-brand' href='javascript:void(0)'>HogarApp</a>
+    <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#mynavbar'>
+      <span class='navbar-toggler-icon'></span>
+    </button>
+    <div class='collapse navbar-collapse' id='mynavbar'>
+      <ul class='navbar-nav me-auto'>
+        <li class='nav-item'><a class='nav-link' href='javascript:void(0)'>Cámaras de Vigilancia</a></li>
+        <li class='nav-item'><a class='nav-link' href='javascript:void(0)'>Alarmas</a></li>
+        <li class='nav-item'><a class='nav-link' href='javascript:void(0)'>Temperaturas </a></li>
+      </ul>
+      <form class='d-flex'>
+        <input class='form-control me-2' type='text' placeholder='buscar'>
+         <div class="dropdown">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+      Historicos movimientos en las cámaras
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">Cámara 1</a></li>
+      <li><a class="dropdown-item" href="#">Cámara 2</a></li>
+      <li><a class="dropdown-item" href="#">Cámara 3</a></li>
+    </ul>
+  </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+  <h1 class='text-center'>HogarApp</h1>
+<!-- Carrusel de cámaras -->
+<div id="cameraCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    
+    <div class="carousel-item active camera">
+      <div class="camera-frame">
+	 <img id="cam-img" src="/static/imagenes/ultima.jpg" width="320" height="240">
+ 
+      </div>
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Cámara 1</h5>
+      </div>
+    </div>
+
+    <!-- Las siguientes cámaras las configuramos otro día -->
+    <div class="carousel-item camera">
+      <div class="camera-frame">
+        <iframe src="http://192.168.1.10:8080/stream" allow="autoplay; fullscreen"></iframe>
+      </div>
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Cámara 2</h5>
+      </div>
+    </div>
+
+    <div class="carousel-item camera">
+      <div class="camera-frame">
+        <iframe src="http://192.168.1.16:8080/stream" allow="autoplay; fullscreen"></iframe>
+      </div>
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Cámara 3</h5>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botones del carrusel -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#cameraCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#cameraCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Siguiente</span>
+  </button>
+</div>
+
+  <!-- Botones GPIO -->
+  <div class="container pt-6">
+    <div class='row'>
+      <div class='col-md-3'>
+        <h6>Alarma</h6>
+        <button class='btn btn-primary' id="btnGPIO0" onclick="toggleGPIO('GPIO0')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Abrir puerta y portón</h6>
+        <button class='btn btn-primary' id="btnGPIO2" onclick="toggleGPIO('GPIO2')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Confort</h6>
+        <button class='btn btn-primary' id="btnGPIO4" onclick="toggleGPIO('GPIO4')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Riego</h6>
+        <button class='btn btn-primary' id="btnGPIO5" onclick="toggleGPIO('GPIO5')">Cargando...</button>
+      </div>
+    </div>
+  </div>
+
+   <div class="container mt-3">
+  <h6>Temperatura y Humedad</h6>
+  <div class="card">
+    <div class="card-body">
+      <p>Temperatura: <span id="temperatura">Cargando...</span> °C</p>
+      <p>Humedad: <span id="humedad">Cargando...</span> %</p>
+      <button class="btn btn-primary" onclick="actualizarTempHum()">Tem_Hum</button>
+    </div>
+  </div>
+</div>
+
+  <div class="container mt-3">
+  <h6>Niveles de Tanques</h6>
+  <div class="card">
+    <div class="card-body">
+      <p>Tanque 1: <span id="tanque1">Cargando...</span>%</p>
+      <p>Tanque 2: <span id="tanque2">Cargando...</span>%</p>
+      <button class="btn btn-primary" onclick="actualizarNiveles()">Niveles</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p id="foot">Author: Fernando Rojas<br>
+  <a href="mailto:optofer@gmail.com">optofer@gmail.com</a></p>
+  <p id="demo"></p>
+</footer>
+
+ 
+
+<script>
+    const socket = new WebSocket("ws://" + location.host + "/ws");
+
+    socket.onopen = () => {
+        console.log("✅ WebSocket conectado");
+        // Opcional: podés pedir el estado inicial si lo manejás desde el backend
+    };
+
+    socket.onmessage = (event) => {
+    console.log("📥 Mensaje del servidor:", event.data);
+
+    const parts = event.data.split(":");
+    const gpio = parts[0];
+    const estado = parts[1] === "1";
+
+    const boton = document.getElementById("btn" + gpio);
+    if (boton) {
+        boton.innerText = `${gpio} ${estado ? "ON" : "OFF"}`;
+        boton.className = "btn " + (estado ? "btn-success" : "btn-danger");
+        estadosGPIO[gpio] = estado;
+    }
+};
+const estadosGPIO = {
+    "GPIO0": false,
+    "GPIO2": false,
+    "GPIO4": false,
+    "GPIO5": false
+};
+
+
+    // Inicializar botones
+    window.onload = () => {
+        for (const gpio in estadosGPIO) {
+            const boton = document.getElementById("btn" + gpio);
+            boton.innerText = gpio + " OFF";
+            boton.className = "btn btn-danger";
+        }
+    };
+
+    function toggleGPIO(gpio) {
+    const estadoActual = estadosGPIO[gpio];
+    const nuevoEstado = !estadoActual;
+
+    estadosGPIO[gpio] = nuevoEstado;
+    socket.send(`${gpio}:${nuevoEstado ? 1 : 0}`);
+}
+ setInterval(() => {
+    const ts = new Date().getTime();
+    document.getElementById("cam-img").src = "/static/ultima.jpg?ts=" + ts;
+  }, 5000); // Actualiza cada 5 segundos   
+</script>
+
+</body>
+</html>

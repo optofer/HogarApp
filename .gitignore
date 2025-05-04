@@ -1,0 +1,42 @@
+# Entorno virtual
+.venv/
+env/
+ENV/
+venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Archivos temporales de sistema
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Archivos RAW y JPG temporales
+*.raw
+*.jpg
+*.jpeg
+*.png
+
+# Archivos de capturas de cámara
+static/ultima.*
+static/imagenes/
+
+# Archivos convertidos y pruebas
+captura_convertida.png
+ver_raw.py
+
+# Archivos de base de datos sensibles
+database/*.raw
+database/usuarios.json
+
+# Archivos de log o temporales
+*.log
+
+# Archivos comprimidos de backup
+*.tar.gz

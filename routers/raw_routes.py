@@ -1,99 +1,54 @@
-print("✅ raw_routes.py está siendo importado")
-
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Query
 from fastapi.responses import PlainTextResponse
-import os
+from PIL import Image, ImageChops
 import numpy as np
-from PIL import Image
+import os
 from datetime import datetime
-
-print("🧪 raw_routes.py fue cargado correctamente")
 
 router = APIRouter()
 
+# Ruta genérica para recibir datos RAW y determinar a qué cámara per>
 @router.post("/upload_raw")
-async def upload_raw(request: Request):
+async def upload_raw(request: Request, cam: int = Query(...)):
     raw_data = await request.body()
-    print("📥 Bytes recibidos:", len(raw_data))
+    print(f"📥 Bytes recibidos de cam{cam}: {len(raw_data)}")
+    cam_id = f"cam{cam}"
+    procesar_y_guardar_imagen(raw_data, cam_id)
+    return {"status": "ok"}
 
-    # Archivos
-    os.makedirs("database", exist_ok=True)
-    raw_path = "database/captura.raw"
-    prev_path = "database/anterior.raw"
-
-    # Si ya había una captura anterior, la pasamos a anterior.raw
-    if os.path.exists(raw_path):
-        os.replace(raw_path, prev_path)
-        print("📦 captura.raw movido a anterior.raw")
-
-    # Guardar la nueva captura como captura.raw
-    with open(raw_path, "wb") as f:
-        f.write(raw_data)
-    print("💾 captura.raw guardado")
-
-    # Guardar en static/ultima.raw (para inspección)
-    with open("static/ultima.raw", "wb") as f:
-        f.write(raw_data)
-
-    # Convertir a imagen JPG
+# Procesar y guardar imagen para una cámara
+def procesar_y_guardar_imagen(raw_data, cam_id):
     width, height = 320, 240
     raw = np.frombuffer(raw_data, dtype=np.uint8)
 
-    if len(raw) != width * height * 2:
-        print(f"❌ RAW inválido: {len(raw)} bytes")
-        return PlainTextResponse("❌ Imagen RAW con tamaño incorrecto")
-
-    raw16 = raw.view(np.uint16).byteswap()
-
-    r = ((raw16 >> 11) & 0x1F) * 255 // 31
-    g = ((raw16 >> 5) & 0x3F) * 255 // 63
-    b = (raw16 & 0x1F) * 255 // 31
-
+    raw16 = raw.view(np.uint16).byteswap()  # <- Mejora calidad
+    r = ((raw16 >> 11) & 0x1F) << 3
+    g = ((raw16 >> 5) & 0x3F) << 2
+    b = (raw16 & 0x1F) << 3
     rgb = np.stack((r, g, b), axis=-1).astype(np.uint8)
 
+    rgb = np.stack((r, g, b), axis=-1).astype(np.uint8)
+    img = Image.fromarray(rgb.reshape((height, width, 3)))
 
-    print("🧪 RAW válido, reconstruyendo imagen...")
-    print("👉 RAW shape antes de reshape:", rgb.shape)
+    ultima_path = f"static/imagenes/{cam_id}.jpg"  # Aquí guarda la imagen actual
+    hist_path = f"static/imagenes/{cam_id}"        # Carpeta de historial
+    os.makedirs(hist_path, exist_ok=True)
 
-    try:
-        img = Image.fromarray(rgb.reshape((height,width, 3)))
-        img.save("static/ultima.jpg", "JPEG")
-        print("✅ ultima.jpg guardada")
-    except Exception as e:
-        print("❌ Error al reconstruir imagen:", e)
-        return PlainTextResponse("❌ Fallo al reconstruir imagen")
-
-    # Comparar con imagen anterior (si existe)
-    movimiento = False
-    if os.path.exists(prev_path):
-        print("🔍 anterior.raw encontrado. Comparando...")
-        raw1 = np.fromfile(prev_path, dtype=np.uint8)
-        raw2 = np.frombuffer(raw_data, dtype=np.uint8)
-
-        if len(raw1) == len(raw2):
-            diferencia = np.abs(raw1.astype(int) - raw2.astype(int))
-            cambio_total = np.sum(diferencia)
-            print(f"📊 Diferencia total: {cambio_total}")
-
-            if cambio_total > 1000:
-                movimiento = True
-        else:
-            print("⚠️ Tamaño diferente. No se compara.")
-    else:
-        print("🆕 No hay anterior.raw, es la primera imagen.")
-
-    # Guardar en historial si hay movimiento
-    if movimiento:
-        print("⚠️ Movimiento detectado. Guardando al historial...")
-        hist_path = "static/imagenes"
-        os.makedirs(hist_path, exist_ok=True)
+    if hay_cambio_significativo(ultima_path, img):
+        img.save(ultima_path, "JPEG")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        img_name = os.path.join(hist_path, f"{timestamp}.jpg")
+        img.save(f"{hist_path}/{cam_id}_{timestamp}.jpg", "JPEG")
 
-        img.save(img_name, "JPEG")
-        print(f"📁 Imagen guardada: {img_name}")
-    else:
-        print("✅ Sin movimiento significativo.")
+# Función común para detección de cambios
+def hay_cambio_significativo(img1_path, img2):
+    try:
+        img1 = Image.open(img1_path).resize(img2.size)
+    except FileNotFoundError:
+        return True  # Si no existe imagen previa, se guarda
 
-    return {"status": "ok"}
+    diff = ImageChops.difference(img1, img2).convert("L")
+    np_diff = np.array(diff)
+    porcentaje = np.count_nonzero(np_diff > 30) / np_diff.size
+    return porcentaje > 0.05
+
 

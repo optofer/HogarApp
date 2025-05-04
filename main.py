@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from routers import user_routes
 from fastapi import WebSocket, WebSocketDisconnect
 from routers import raw_routes
+import os
+from PIL import Image
 
 print("🚀 main.py se está ejecutando")
 
@@ -42,6 +44,20 @@ def verificar_credenciales(credentials: HTTPBasicCredentials = Depends(security)
         )
 
     return username
+
+# Crear imágenes negras iniciales para cada cámara
+carpetas = {
+    "cam1": "static/imagenes/cam1.jpg",
+    "cam2": "static/imagenes/cam2.jpg",
+    "cam3": "static/imagenes/cam3.jpg"
+}
+
+for cam, path in carpetas.items():
+    if not os.path.exists(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        negro = Image.new("RGB", (320, 240), (0, 0, 0))
+        negro.save(path, "JPEG")
+
 
 app = FastAPI()
 

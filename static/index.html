@@ -100,19 +100,8 @@
     <div class="camera-frame">
       <img id="cam-img-3" src="/static/imagenes/cam3.jpg" alt="Cámara 3">
       <h5>Cámara 3</h5>
-    </div>
+   </div>
   </div>
-
-  <!-- Botones del carrusel -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#cameraCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Anterior</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#cameraCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Siguiente</span>
-  </button>
-</div>
 
   <!-- Botones GPIO -->
   <div class="container pt-6">
@@ -130,14 +119,14 @@
         <button class='btn btn-primary' id="btnGPIO4" onclick="toggleGPIO('GPIO4')">Cargando...</button>
       </div>
       <div class='col-md-3'>
-        <h6>Riego</h6>
+        <h6>Luces</h6>
         <button class='btn btn-primary' id="btnGPIO5" onclick="toggleGPIO('GPIO5')">Cargando...</button>
       </div>
     </div>
   </div>
 
    <div class="container mt-3">
-  <h6>Temperatura y Humedad</h6>
+  <h6>Temperatura hambiente</h6>
   <div class="card">
     <div class="card-body">
       <p>Temperatura: <span id="temperatura">Cargando...</span> °C</p>
@@ -148,12 +137,12 @@
 </div>
 
   <div class="container mt-3">
-  <h6>Niveles de Tanques</h6>
+  <h6>Temperatura exterior</h6>
   <div class="card">
     <div class="card-body">
-      <p>Tanque 1: <span id="tanque1">Cargando...</span>%</p>
-      <p>Tanque 2: <span id="tanque2">Cargando...</span>%</p>
-      <button class="btn btn-primary" onclick="actualizarNiveles()">Niveles</button>
+       <p>Temperatura: <span id="temperatura">Cargando...</span> °C</p>
+      <p>Humedad: <span id="humedad">Cargando...</span> %</p>
+      <button class="btn btn-primary" onclick="actualizarTempHum()">Tem_Hum</button>
     </div>
   </div>
 </div>
@@ -184,7 +173,7 @@
     const boton = document.getElementById("btn" + gpio);
     if (boton) {
         boton.innerText = `${gpio} ${estado ? "ON" : "OFF"}`;
-        boton.className = "btn " + (estado ? "btn-success" : "btn-danger");
+        boton.className = "btn " + (estado ? "btn-danger " : "btn-success");
         estadosGPIO[gpio] = estado;
     }
 };

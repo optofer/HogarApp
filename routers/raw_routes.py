@@ -48,7 +48,7 @@ def hay_cambio_significativo(img1_path, img2):
 
     diff = ImageChops.difference(img1, img2).convert("L")
     np_diff = np.array(diff)
-    porcentaje = np.count_nonzero(np_diff > 30) / np_diff.size
+    porcentaje = np.count_nonzero(np_diff > 15) / np_diff.size
     return porcentaje > 0.05
 
 

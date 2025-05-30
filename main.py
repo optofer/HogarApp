@@ -76,7 +76,6 @@ async def root(user: str = Depends(verificar_credenciales)):
 
 # Lista de conexiones activas
 conexiones_websocket = []
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -85,9 +84,24 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"📩 Mensaje recibido: {data}")
-            # reenviar a todos los clientes conectados (incluido quien lo envió)
+
+            # Enviar el mensaje a todos los clientes conectados
             for conn in conexiones_websocket:
                 await conn.send_text(data)
+
+            # Procesar comando GPIO: "GPIO4:1"
+            try:
+                gpio, estado = data.split(":")
+                if gpio in gpio_map:
+                    if estado == "1":
+                        gpio_map[gpio].off()  # Lógica Freenove: LOW enciende LED
+                    else:
+                        gpio_map[gpio].on()   # HIGH apaga LED
+                    print(f"⚙️ {gpio} cambiado a {'ON' if estado == '1' else 'OFF'}")
+                else:
+                    print(f"⚠️ GPIO no reconocido: {gpio}")
+            except Exception as e:
+                print(f"⚠️ Error procesando GPIO: {e}")
 
     except WebSocketDisconnect:
         conexiones_websocket.remove(websocket)

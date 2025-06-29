@@ -20,3 +20,4 @@ Proyecto de vigilancia con ESP32-CAM enviando imágenes RAW a un servidor FastAP
 
 ```bash
 uvicorn main:app --reload --host 0.0.0.0
+# raspberry_fastapiserver

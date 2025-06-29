@@ -41,3 +41,5 @@ database/usuarios.json
 *.zip
 *.7z
 *.rar
+tokengithub
+auth.py

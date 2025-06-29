@@ -12,6 +12,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from routers import raw_routes
 import os
 from PIL import Image
+from fastapi.staticfiles import StaticFiles
 
 print("🚀 main.py se está ejecutando")
 

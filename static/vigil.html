@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>VigilanciaApp</title>
+  <style>
+ body {
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+.navbar {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.camara {
+  width: 520px;
+  height: 340px;
+  margin: 10px;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.camara:hover {
+  transform: scale(1.05);
+  border-color: #2980b9;
+}
+
+#foot {
+  text-align: center;
+  width: 100%;
+  margin-top:280px;
+  padding: 10px;
+  border-top: 2px solid #ccc;
+  font-size: 0.9rem;
+  color: #555;
+}
+#visor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+#visor img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+}
+
+
+ </style>
+</head>
+<body>
+
+<!-- Navbar -->
+
+<div class="navbar">
+  <div class="logo"><a href="/static/index.html">HogarApp</a></div>
+  <div class="nav-links">
+    <a href="/static/vigil.html">Cámaras</a>
+    <a href="/static/warnin.html">Alarmas</a>
+    <a href="/static/termica.html">Temperatura</a>
+  </div>
+</div>
+  <h1 class='text-align: center'>CámarasApp</h1>
+
+  <div style="text-align :center">
+ 	 <img id="cam-img-1" src="static/imagenes/cam1.jpg" class="camara" onclick="abrirVisor(this.getAttribute('src'))">
+  	 <img id="cam-img-2" src="static/imagenes/cam2.jpg" class="camara" onclick="abrirVisor(this.src)">
+ 	 <img id="cam-img-3" src="static/imagenes/cam3.jpg" class="camara" onclick="abrirVisor(this.src)">
+   </div>	
+  <!-- Contenedor de pantalla completa -->
+         <div id="visor" onclick="cerrarVisor()">
+         <img src="" alt="imagen en pantalla completa">
+         </div>
+
+<img src="https://via.placeholder.com/600x400?text=TEST" onclick="abrirVisor(this.src)" style="border:2px solid red; cursor:pointer">
+
+
+<footer>
+  <p id="foot">Author: Fernando Rojas<br>
+  <a href="mailto:optofer@gmail.com">optofer@gmail.com</a></p>
+  <p id="demo"></p>
+</footer>
+<script>
+       function abrirVisor(src) {
+      const visor = document.getElementById("visor");
+      const img = visor.querySelector("img");
+      img.src = src;
+      visor.style.display = "flex";
+    }
+
+    function cerrarVisor() {
+     const visor = document.getElementById("visor");   
+     visor.style.display = "none";
+    }
+   document.addEventListener('keydown', function(e) {
+  	if (e.key === "Escape") cerrarVisor();
+  });
+
+ 
+function actualizarImagen(camId) {
+    const imgElement = document.getElementById(`cam-img-${camId}`);
+    const nuevaImg = new Image();
+    const ts = new Date().getTime();
+    nuevaImg.src = `/static/imagenes/cam${camId}.jpg?ts=${ts}`;
+
+    nuevaImg.onload = function () {
+        imgElement.src = nuevaImg.src;
+    };
+
+    nuevaImg.onerror = function () {
+        console.warn(`⚠️ cam${camId}.jpg no se pudo cargar.`);
+        // Si querés mostrar una imagen de error podrías poner:
+        // imgElement.src = "/static/error.jpg";
+    };
+}
+
+// Llama esta función periódicamente
+setInterval(() => {
+    actualizarImagen(1);
+    actualizarImagen(2);
+    actualizarImagen(3);
+}, 2000);
+console.log("✅ Script cargado correctamente");
+
+
+</script>
+</body>
+</html>

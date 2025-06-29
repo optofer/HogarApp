@@ -1,8 +1,8 @@
-# Entorno virtual
+# Entornos virtuales
 .venv/
-env/
-ENV/
 venv/
+ENV/
+env/
 
 # Archivos de caché de Python
 __pycache__/
@@ -10,33 +10,34 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Archivos temporales de sistema
+# Archivos temporales del sistema
 *.swp
 *.bak
 *.tmp
 .DS_Store
 Thumbs.db
 
-# Archivos RAW y JPG temporales
+# Archivos RAW, imágenes temporales y capturas
 *.raw
 *.jpg
 *.jpeg
 *.png
-
-# Archivos de capturas de cámara
 static/ultima.*
 static/imagenes/
-
-# Archivos convertidos y pruebas
 captura_convertida.png
+
+# Archivos de desarrollo
 ver_raw.py
 
-# Archivos de base de datos sensibles
+# Archivos de datos sensibles
 database/*.raw
 database/usuarios.json
 
-# Archivos de log o temporales
+# Archivos de log
 *.log
 
 # Archivos comprimidos de backup
 *.tar.gz
+*.zip
+*.7z
+*.rar

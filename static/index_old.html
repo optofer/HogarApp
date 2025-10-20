@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <title>HogarApp</title>
+  <style>
+    body { background-color: #ffcc00; color: blue; margin: 20px; }
+    .container { margin-top: 30px; }
+    .btn { width: 100%; }      
+   h6 {
+     text-align: center;
+   }
+   #foot{
+     text-align: center;
+     padding-bottom: 50px;
+   }
+#cameraCarousel {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+.camera-frame {
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  width: 340px; /* Ancho consistente para imagen + padding */
+}
+
+.camera-frame:hover {
+  transform: scale(1.02);
+}
+
+
+
+
+#cam-img {
+  image-rendering: auto;
+  width: 320px;
+  height: 240px;
+  object-fit: contain;
+  border: 1px solid #ccc;
+}
+
+ </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class='navbar navbar-expand-sm navbar-dark bg-dark'>
+
+  <div class='container-fluid'>
+    <a class='navbar-brand' href='/static/index.html'>HogarApp</a>
+    <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#mynavbar'>
+      <span class='navbar-toggler-icon'></span>
+    </button>
+    <div class='collapse navbar-collapse' id='mynavbar'>
+      <ul class='navbar-nav me-auto'>
+        <li class='nav-item'><a class='nav-link' href='/static/vigil.html'>Cámaras de Vigilancia</a></li>
+        <li class='nav-item'><a class='nav-link' href='/static/warnin.html'>Alarmas</a></li>
+        <li class='nav-item'><a class='nav-link' href='/static/termica.html'>Temperaturas </a></li>
+      </ul>
+      <form class='d-flex'>
+        <input class='form-control me-2' type='text' placeholder='buscar'>
+         <div class="dropdown">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+      Historicos movimientos en las cámaras
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">Cámara 1</a></li>
+      <li><a class="dropdown-item" href="#">Cámara 2</a></li>
+      <li><a class="dropdown-item" href="#">Cámara 3</a></li>
+    </ul>
+  </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+  <h1 class='text-center'>HogarApp</h1>
+<!-- Carrusel de cámaras -->
+ <div id="cameraCarousel">
+    <div class="camera-frame">
+      <img id="cam-img-1" src="/static/imagenes/cam1.jpg" alt="Cámara 1">
+      <h5>Cámara 1</h5>
+    </div>
+    <div class="camera-frame">
+      <img id="cam-img-2" src="/static/imagenes/cam2.jpg" alt="Cámara 2">
+      <h5>Cámara 2</h5>
+    </div>
+    <div class="camera-frame">
+      <img id="cam-img-3" src="/static/imagenes/cam3.jpg" alt="Cámara 3">
+      <h5>Cámara 3</h5>
+   </div>
+  </div>
+
+  <!-- Botones GPIO -->
+  <div class="container pt-6">
+    <div class='row'>
+      <div class='col-md-3'>
+        <h6>Alarma</h6>
+        <button class='btn btn-primary' id="btnGPIO0" onclick="toggleGPIO('GPIO0')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Abrir puerta y portón</h6>
+        <button class='btn btn-primary' id="btnGPIO2" onclick="toggleGPIO('GPIO2')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Confort</h6>
+        <button class='btn btn-primary' id="btnGPIO4" onclick="toggleGPIO('GPIO4')">Cargando...</button>
+      </div>
+      <div class='col-md-3'>
+        <h6>Luces</h6>
+        <button class='btn btn-primary' id="btnGPIO5" onclick="toggleGPIO('GPIO5')">Cargando...</button>
+      </div>
+    </div>
+  </div>
+
+   <div class="container mt-3">
+  <h6>Temperatura hambiente</h6>
+  <div class="card">
+    <div class="card-body">
+      <p>Temperatura: <span id="temperatura">Cargando...</span> °C</p>
+      <p>Humedad: <span id="humedad">Cargando...</span> %</p>
+      <button class="btn btn-primary" onclick="actualizarTempHum()">Tem_Hum</button>
+    </div>
+  </div>
+</div>
+
+  <div class="container mt-3">
+  <h6>Temperatura exterior</h6>
+  <div class="card">
+    <div class="card-body">
+       <p>Temperatura: <span id="temperatura">Cargando...</span> °C</p>
+      <p>Humedad: <span id="humedad">Cargando...</span> %</p>
+      <button class="btn btn-primary" onclick="actualizarTempHum()">Tem_Hum</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p id="foot">Author: Fernando Rojas<br>
+  <a href="mailto:optofer@gmail.com">optofer@gmail.com</a></p>
+  <p id="demo"></p>
+</footer>
+
+ 
+
+<script>
+    const socket = new WebSocket("ws://" + location.host + "/ws");
+
+    socket.onopen = () => {
+        console.log("✅ WebSocket conectado");
+        // Opcional: podés pedir el estado inicial si lo manejás desde el backend
+    };
+
+    socket.onmessage = (event) => {
+    console.log("📥 Mensaje del servidor:", event.data);
+
+    const parts = event.data.split(":");
+    const gpio = parts[0];
+    const estado = parts[1] === "1";
+
+    const boton = document.getElementById("btn" + gpio);
+    if (boton) {
+        boton.innerText = `${gpio} ${estado ? "ON" : "OFF"}`;
+        boton.className = "btn " + (estado ? "btn-danger " : "btn-success");
+        estadosGPIO[gpio] = estado;
+    }
+};
+const estadosGPIO = {
+    "GPIO0": false,
+    "GPIO2": false,
+    "GPIO4": false,
+    "GPIO5": false
+};
+
+
+    // Inicializar botones
+    window.onload = () => {
+        for (const gpio in estadosGPIO) {
+            const boton = document.getElementById("btn" + gpio);
+            boton.innerText = gpio + " OFF";
+            boton.className = "btn btn-danger";
+        }
+    };
+
+    function toggleGPIO(gpio) {
+    const estadoActual = estadosGPIO[gpio];
+    const nuevoEstado = !estadoActual;
+
+    estadosGPIO[gpio] = nuevoEstado;
+    socket.send(`${gpio}:${nuevoEstado ? 1 : 0}`);
+}
+ 
+function actualizarImagen(camId) {
+    const imgElement = document.getElementById(`cam-img-${camId}`);
+    const nuevaImg = new Image();
+    const ts = new Date().getTime();
+    nuevaImg.src = `/static/imagenes/cam${camId}.jpg?ts=${ts}`;
+
+    nuevaImg.onload = function () {
+        imgElement.src = nuevaImg.src;
+    };
+
+    nuevaImg.onerror = function () {
+        console.warn(`⚠️ cam${camId}.jpg no se pudo cargar.`);
+        // Si querés mostrar una imagen de error podrías poner:
+        // imgElement.src = "/static/error.jpg";
+    };
+}
+
+// Llama esta función periódicamente
+setInterval(() => {
+    actualizarImagen(1);
+    actualizarImagen(2);
+    actualizarImagen(3);
+}, 2000);
+</script>
+</body>
+</html>

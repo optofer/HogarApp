@@ -1,17 +1,46 @@
+# database/fake_db.py
 import json
-from models.user import User
+from pathlib import Path
+from models.user import UserOut
 
-# Cargar usuarios desde archivo JSON
+DB_PATH = Path("database/usuarios.json")
+
+
 def load_users():
-    with open("database/usuarios.json", "r") as f:
-        data = json.load(f)
-        return [User(**user) for user in data]
+    """Carga los usuarios desde el JSON, validando con UserOut."""
+    if not DB_PATH.exists():
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+        DB_PATH.write_text("[]", encoding="utf-8")
+        return []
 
-# Guardar usuarios en el archivo JSON
+    try:
+        data = json.loads(DB_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        data = []
+
+    users = []
+    for item in data:
+        try:
+            users.append(UserOut.model_validate(item))
+        except Exception:
+            # Si el JSON tiene un usuario incompleto, lo descarta
+            continue
+    return users
+
+
 def save_users(users):
-    with open("database/usuarios.json", "w") as f:
-        json.dump([user.dict() for user in users], f, indent=4)
+    """Guarda los usuarios en JSON usando model_dump()."""
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    data = []
+    for u in users:
+        try:
+            data.append(u.model_dump())
+        except AttributeError:
+            # por compatibilidad con objetos tipo dict
+            data.append(u)
+    DB_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=4), encoding="utf-8")
 
-# Lista que se carga al iniciar
+
+# Lista inicial de usuarios
 Users_list = load_users()
 

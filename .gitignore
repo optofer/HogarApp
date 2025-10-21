@@ -1,45 +1,26 @@
-# Entornos virtuales
-.venv/
-venv/
-ENV/
-env/
-
-# Archivos de caché de Python
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.so
+*.egg-info/
+.eggs/
 
-# Archivos temporales del sistema
-*.swp
-*.bak
-*.tmp
+# Entornos
+.venv/
+venv/
+.env
+.env.*
+
+# FastAPI/UVicorn
+*.log
+
+# Editor/OS
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 
-# Archivos RAW, imágenes temporales y capturas
-*.raw
-*.jpg
-*.jpeg
-*.png
-static/ultima.*
-static/imagenes/
-captura_convertida.png
-
-# Archivos de desarrollo
-ver_raw.py
-
-# Archivos de datos sensibles
-database/*.raw
-database/usuarios.json
-
-# Archivos de log
-*.log
-
-# Archivos comprimidos de backup
-*.tar.gz
-*.zip
-*.7z
-*.rar
-tokengithub
-auth.py
+# Proyecto (ajustá si hace falta)
+static/imagenes/**/*.tmp

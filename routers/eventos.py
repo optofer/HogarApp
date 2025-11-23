@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, WebSocket
 from fastapi.responses import JSONResponse
 import asyncio
 
+router = APIRouter() 
 clients = set()
 
 @router.websocket("/ws")
@@ -11,8 +12,9 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             await websocket.receive_text()
-    except:
-        clients.remove(websocket)
+    except Exception:
+        if websocket in clients:
+            clients.remove(websocket)
 
 @router.post("/gpio_event")
 async def gpio_event(request: Request):
@@ -20,6 +22,7 @@ async def gpio_event(request: Request):
     pin = data["pin"]
     state = data["state"]
     msg = f"{pin}:{state}"
-    # Enviar el evento a todos los clientes WebSocket conectados
+    # Enviar evento a todos los websockets conectados
     await asyncio.gather(*[client.send_text(msg) for client in clients])
     return JSONResponse({"ok": True})
+

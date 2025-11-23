@@ -103,29 +103,41 @@
     </section>
 
     <!-- Cámaras -->
-    <section id="two" class="wrapper alt style2">
-      <section class="spotlight">
-        <div class="image"><img src="/static/imagenes/cam1.jpg" alt="Cam 1" /></div>
-        <div class="content">
-          <h2>Cámara de vigilancia<br>Living</h2>
-          <p>Fuente: /static/imagenes/cam1.jpg</p>
-        </div>
-      </section>
-      <section class="spotlight">
-        <div class="image"><img src="/static/imagenes/cam2.jpg" alt="Cam 2" /></div>
-        <div class="content">
-          <h2>Cámara de vigilancia<br>Patio trasero</h2>
-          <p>Fuente: /static/imagenes/cam2.jpg</p>
-        </div>
-      </section>
-      <section class="spotlight">
-        <div class="image"><img src="/static/imagenes/cam3.jpg" alt="Cam 3" /></div>
-        <div class="content">
-          <h2>Cámara de vigilancia<br>Exteriores</h2>
-          <p>Fuente: /static/imagenes/cam3.jpg</p>
-        </div>
-      </section>
-    </section>
+<section id="two" class="wrapper alt style2">
+  <!-- Cámara 1 -->
+  <section class="spotlight">
+    <div class="image">
+      <img id="cam1" src="/static/imagenes/cam1.jpg" alt="Cam 1" width="320" height="240" />
+    </div>
+    <div class="content">
+      <h2>Cámara de vigilancia<br>Living</h2>
+      <p>Fuente: /static/imagenes/cam1.jpg</p>
+    </div>
+  </section>
+
+  <!-- Cámara 2 -->
+  <section class="spotlight">
+    <div class="image">
+      <img id="cam2" src="/static/imagenes/cam2.jpg" alt="Cam 2" width="320" height="240" />
+    </div>
+    <div class="content">
+      <h2>Cámara de vigilancia<br>Patio trasero</h2>
+      <p>Fuente: /static/imagenes/cam2.jpg</p>
+    </div>
+  </section>
+
+  <!-- Cámara 3 -->
+  <section class="spotlight">
+    <div class="image">
+      <img id="cam3" src="/static/imagenes/cam3.jpg" alt="Cam 3" width="320" height="240" />
+    </div>
+    <div class="content">
+      <h2>Cámara de vigilancia<br>Exteriores</h2>
+      <p>Fuente: /static/imagenes/cam3.jpg</p>
+    </div>
+  </section>
+</section>
+
 
     <!-- Datos -->
     <section id="three" class="wrapper style3 special">
@@ -226,5 +238,31 @@
     }
   })();
   </script>
+
+<script>
+(function() {
+  const CAMS = [
+    { id: "cam1", url: "/static/imagenes/cam1.jpg" },
+    // si sumás más cámaras, agregalas acá:
+    // { id: "cam2", url: "/static/imagenes/cam2.jpg" },
+    // { id: "cam3", url: "/static/imagenes/cam3.jpg" },
+  ];
+  const PERIOD_MS = 1000; // frecuencia de refresco
+
+  function refreshOne({id, url}) {
+    const tag = document.getElementById(id);
+    if (!tag) return;
+    const candidate = url + "?t=" + Date.now(); // cache-buster
+    const pre = new Image();
+    pre.onload = () => { tag.src = candidate; }; // swap solo si cargó OK
+    pre.src = candidate;
+  }
+
+  setInterval(() => CAMS.forEach(refreshOne), PERIOD_MS);
+})();
+</script>
+
+
+
 </body>
 </html>

@@ -5,11 +5,16 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from routers import eventos
+
 
 import secrets
 import os
 from PIL import Image
+from gpiozero.pins.pigpio import PiGPIOFactory
 from gpiozero import LED
+
 
 # Routers
 from routers import user_routes, raw_routes
@@ -17,6 +22,7 @@ from routers import user_routes, raw_routes
 # from routers import eventos, nuevo_raw_route, viejo_raw_routes
 
 print("🚀 main.py se está ejecutando")
+
 
 # ---------- AUTENTICACIÓN BASIC ----------
 security = HTTPBasic()
@@ -53,12 +59,21 @@ app = FastAPI(
     docs_url=None,       # desactivo docs por defecto
     redoc_url=None,      # desactivo redoc por defecto
     openapi_url=None,    # desactivo openapi por defecto
-    # Protege TODAS las rutas HTTP con Basic
-    dependencies=[Depends(verificar_credenciales)]
+
 )
 
 # ---------- ARCHIVOS ESTÁTICOS ----------
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+# CORS abierto para pruebas
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], allow_credentials=True,
+    allow_methods=["*"], allow_headers=["*"],
+)
+
 
 # ---------- INDEX ----------
 @app.get("/", response_class=FileResponse)
@@ -79,9 +94,7 @@ for _, path in carpetas.items():
 # ---------- ROUTERS (quedan protegidos por la dependencia global) ----------
 app.include_router(user_routes.router)
 app.include_router(raw_routes.router)
-# app.include_router(eventos.router)
-# app.include_router(nuevo_raw_route.router)
-# app.include_router(viejo_raw_routes.router)
+app.include_router(eventos.router)
 
 # ---------- DOCS PROTEGIDOS ----------
 @app.get("/openapi.json", response_class=JSONResponse)
@@ -97,11 +110,13 @@ def redoc(_: str = Depends(verificar_credenciales)):
     return get_redoc_html(openapi_url="/openapi.json", title=f"{app.title} - ReDoc")
 
 # ---------- GPIO ----------
+factory = PiGPIOFactory()  # usa el daemon pigpiod local
+
 gpio_map = {
-    "GPIO0": LED(17),  # Pin 11 (Alarma)
-    "GPIO2": LED(18),  # Pin 12 (Pánico)
-    "GPIO4": LED(27),  # Pin 13 (Confort)
-    "GPIO5": LED(22),  # Pin 15 (Riego)
+     "GPIO0": LED(17, active_high=False, pin_factory=factory),  # Pin físico 11 (Alarma)
+    "GPIO2": LED(18, active_high=False, pin_factory=factory),  # Pin físico 12 (Pánico)
+    "GPIO4": LED(27, active_high=False, pin_factory=factory),  # Pin físico 13 (Confort)
+    "GPIO5": LED(22, active_high=False, pin_factory=factory),  # Pin físico 15 (Riego)
 }
 
 # ---------- WEBSOCKET (nota: no usa Basic del navegador) ----------
@@ -138,4 +153,5 @@ async def websocket_endpoint(websocket: WebSocket):
         if websocket in conexiones_websocket:
             conexiones_websocket.remove(websocket)
         print("❌ WebSocket desconectado")
+
 

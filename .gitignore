@@ -39,3 +39,4 @@ data/
 # Cachés Python
 __pycache__/
 *.pyc
+static/index2.html

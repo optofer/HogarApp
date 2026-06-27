@@ -24,3 +24,18 @@ Thumbs.db
 
 # Proyecto (ajustá si hace falta)
 static/imagenes/**/*.tmp
+
+# Backups locales
+*.bak
+*.bak_*
+backups/
+
+# Base de datos local generada por la app
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Cachés Python
+__pycache__/
+*.pyc

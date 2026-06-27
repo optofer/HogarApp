@@ -5,263 +5,436 @@
   <title>HogarApp</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
-  <!-- CSS del tema (servido por FastAPI desde /static) -->
+  <!-- CSS del tema (Spectral) -->
   <link rel="stylesheet" href="/static/assets/css/main.css" />
   <noscript><link rel="stylesheet" href="/static/assets/css/noscript.css" /></noscript>
 
+  <!-- ----------------------------- -->
+  <!--        ESTILOS SMART          -->
+  <!-- ----------------------------- -->
   <style>
-    /* Extras mínimos propios */
-    .features-gpio .button[aria-pressed="true"] { box-shadow: 0 0 0 2px #22c55e inset; }
-    #wsBadge { background:#334155; color:#e2e8f0; border-radius:0.4rem; padding:.2rem .45rem; }
-    #wsBadge.ws-ok { background:#14532d; }
-    #wsBadge.ws-err { background:#7f1d1d; }
-  </style>
-</head>
-<body class="landing is-preload">
+body {
+    padding-top: 60px; /* Evita que tape el contenido */
+    background: #1e293b; /* opcional: color base */
+}
 
-  <!-- Page Wrapper -->
-  <div id="page-wrapper">
+ /* ----------------------------------------- */
+/* NAVBAR SMART HOME                         */
+/* ----------------------------------------- */
 
-    <!-- Header -->
-    <header id="header" class="alt">
-      <h1><a href="#">HogarApp</a></h1>
-      <nav id="nav">
-        <ul>
-          <li><span id="wsBadge" class="label">WS: (offline)</span></li>
-          <li class="special">
-            <a href="#menu" class="menuToggle"><span>Menú</span></a>
-            <div id="menu">
-              <ul>
-                <li><a href="#controles">Controles</a></li>
-                <li><a href="#two">Cámaras</a></li>
-                <li><a href="#three">Datos</a></li>
-                <li><a href="#cta">Contacto</a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </nav>
-    </header>
+.navbar-smart {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    background: rgba(15, 23, 42, 0.75); /* navy transparente */
+    backdrop-filter: blur(6px);
+    color: #e2e8f0;
+    z-index: 2000;
+    box-shadow: 0 0 12px rgba(0,0,0,0.45);
+}
 
-    <!-- Banner -->
-    <section id="banner">
-      <div class="inner">
-        <h2>HogarApp</h2>
-        <p>Control para sentir seguridad<br>seguridad para disfrutar</p>
-        <ul class="actions special">
-          <li><a href="#controles" class="button primary scrolly">Ir a Controles</a></li>
-        </ul>
-      </div>
-      <a href="#one" class="more scrolly">Hay más</a>
-    </section>
+.nav-left i {
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #e2e8f0;
+}
 
-    <!-- Mensaje introductorio -->
-    <section id="one" class="wrapper style1 special">
-      <div class="inner">
-        <header class="major">
-          <h2>Controle la alarma y el confort de su hogar</h2>
-          <p>Desde la comodidad de su trabajo o estando de vacaciones</p>
-        </header>
-        <ul class="icons major">
-          <li><span class="icon fa-gem major style1"><span class="label">Calidad</span></span></li>
-          <li><span class="icon fa-heart major style2"><span class="label">Confort</span></span></li>
-          <li><span class="icon solid fa-code major style3"><span class="label">Tecnología</span></span></li>
-        </ul>
-      </div>
-    </section>
+.nav-center {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 
-    <!-- Controles (estático; los botones reales pueden llamar sendGPIO) -->
-    <section id="controles" class="wrapper style1 special">
-      <div class="inner">
-        <header class="major">
-          <h2>Controles</h2>
-          <p class="small">Modo local: los botones no actúan si no hay servidor.</p>
-        </header>
-        <ul class="features features-gpio">
-          <li>
-            <span class="icon solid fa-lightbulb"></span>
-            <h3>Alarma</h3>
-            <button class="button primary fit btn-toggle" aria-pressed="false" onclick="toggleDemo(this)">Simular</button>
-          </li>
-          <li>
-            <span class="icon solid fa-bolt"></span>
-            <h3>Confort</h3>
-            <button class="button primary fit btn-toggle" aria-pressed="false" onclick="toggleDemo(this)">Simular</button>
-          </li>
-          <li>
-            <span class="icon solid fa-door-open"></span>
-            <h3>Luces interiores</h3>
-            <button class="button primary fit btn-toggle" aria-pressed="false" onclick="toggleDemo(this)">Simular</button>
-          </li>
-          <li>
-            <span class="icon solid fa-broadcast-tower"></span>
-            <h3>Cerrojos</h3>
-            <button class="button primary fit btn-toggle" aria-pressed="false" onclick="toggleDemo(this)">Simular</button>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Cámaras -->
-<section id="two" class="wrapper alt style2">
-  <!-- Cámara 1 -->
-  <section class="spotlight">
-    <div class="image">
-      <img id="cam1" src="/static/imagenes/cam1.jpg" alt="Cam 1" width="320" height="240" />
-    </div>
-    <div class="content">
-      <h2>Cámara de vigilancia<br>Living</h2>
-      <p>Fuente: /static/imagenes/cam1.jpg</p>
-    </div>
-  </section>
-
-  <!-- Cámara 2 -->
-  <section class="spotlight">
-    <div class="image">
-      <img id="cam2" src="/static/imagenes/cam2.jpg" alt="Cam 2" width="320" height="240" />
-    </div>
-    <div class="content">
-      <h2>Cámara de vigilancia<br>Patio trasero</h2>
-      <p>Fuente: /static/imagenes/cam2.jpg</p>
-    </div>
-  </section>
-
-  <!-- Cámara 3 -->
-  <section class="spotlight">
-    <div class="image">
-      <img id="cam3" src="/static/imagenes/cam3.jpg" alt="Cam 3" width="320" height="240" />
-    </div>
-    <div class="content">
-      <h2>Cámara de vigilancia<br>Exteriores</h2>
-      <p>Fuente: /static/imagenes/cam3.jpg</p>
-    </div>
-  </section>
-</section>
+.nav-right {
+    font-size: 1.2rem;
+    font-family: monospace;
+}
 
 
-    <!-- Datos -->
-    <section id="three" class="wrapper style3 special">
-      <div class="inner">
-        <header class="major">
-          <h2>Datos de interés</h2>
-        </header>
-        <ul class="features">
-          <li class="icon fa-paper-plane">
-            <h3>Temperatura Exterior</h3>
-            <p>(Se integrará luego con el servidor)</p>
-          </li>
-          <li class="icon fa-paper-plane">
-            <h3>Temperatura Interior</h3>
-            <p>(Se integrará luego con sensores)</p>
-          </li>
-          <li class="icon solid fa-laptop">
-            <h3>Histórico de Alarmas</h3>
-            <p>(Se integrará luego con la base de datos)</p>
-          </li>
-          <li class="icon solid fa-code">
-            <h3>Servidor propio</h3>
-            <p>Totalmente conectado a través de una VPN</p>
-          </li>
-        </ul>
-      </div>
-    </section>
+  /* BADGE WS */
+  #wsBadge {
+      background:#334155; color:#e2e8f0;
+      padding:4px 8px; border-radius:6px;
+  }
+  #wsBadge.ws-ok { background:#14532d; }
+  #wsBadge.ws-err { background:#7f1d1d; }
 
-    <!-- CTA -->
-    <section id="cta" class="wrapper style4">
-      <div class="inner">
-        <header>
-          <h2>Industrias Optofer</h2>
-          <p>Para hacerte la vida más fácil</p>
-        </header>
-        <ul class="actions stacked">
-          <li><a href="#controles" class="button fit primary scrolly">Ver controles</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Footer con créditos/licencias -->
-    <footer id="footer">
-      <ul class="icons">
-        <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-        <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-        <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-        <li><a href="mailto:optofer@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-      </ul>
-      <p class="small">
-        Design: <a href="https://html5up.net/spectral" target="_blank" rel="noopener">Spectral</a> by 
-        <a href="https://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> · 
-        Icons by <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a>
-      </p>
-    </footer>
-
-  </div>
-
-  <!-- Scripts del tema (desde /static) -->
-  <script src="/static/assets/js/jquery.min.js"></script>
-  <script src="/static/assets/js/jquery.scrollex.min.js"></script>
-  <script src="/static/assets/js/jquery.scrolly.min.js"></script>
-  <script src="/static/assets/js/browser.min.js"></script>
-  <script src="/static/assets/js/breakpoints.min.js"></script>
-  <script src="/static/assets/js/util.js"></script>
-  <script src="/static/assets/js/main.js"></script>
-
-  <!-- JS mínimo para demo local de botones -->
-  <script>
-    function toggleDemo(btn) {
-      const pressed = btn.getAttribute('aria-pressed') === 'true';
-      btn.setAttribute('aria-pressed', String(!pressed));
-    }
-  </script>
-
-  <!-- (Opcional) Habilitar badge de WebSocket cuando el backend está online -->
-  <script>
-  (function () {
-    const badge = document.getElementById('wsBadge');
-    try {
-      const proto = (location.protocol === 'https:') ? 'wss' : 'ws';
-      const ws = new WebSocket(`${proto}://${location.host}/ws`);
-
-      ws.addEventListener('open', () => {
-        badge.textContent = 'WS: online';
-        badge.classList.add('ws-ok');
-        badge.classList.remove('ws-err');
-      });
-
-      ws.addEventListener('close', () => {
-        badge.textContent = 'WS: offline';
-        badge.classList.add('ws-err');
-        badge.classList.remove('ws-ok');
-      });
-    } catch (e) {
-      badge.textContent = 'WS: error';
-      badge.classList.add('ws-err');
-    }
-  })();
-  </script>
-
-<script>
-(function() {
-  const CAMS = [
-    { id: "cam1", url: "/static/imagenes/cam1.jpg" },
-    // si sumás más cámaras, agregalas acá:
-    // { id: "cam2", url: "/static/imagenes/cam2.jpg" },
-    // { id: "cam3", url: "/static/imagenes/cam3.jpg" },
-  ];
-  const PERIOD_MS = 1000; // frecuencia de refresco
-
-  function refreshOne({id, url}) {
-    const tag = document.getElementById(id);
-    if (!tag) return;
-    const candidate = url + "?t=" + Date.now(); // cache-buster
-    const pre = new Image();
-    pre.onload = () => { tag.src = candidate; }; // swap solo si cargó OK
-    pre.src = candidate;
+  /* TARJETAS SMART HOME */
+  .card-smart {
+      background:#1f2937ee;
+      border-radius:20px;
+      padding:20px;
+      text-align:center;
+      margin:20px;
+      color:white;
+      box-shadow:0 0 20px rgba(0,0,0,0.35);
+      transition:all 0.35s ease;
+  }
+  .card-smart:hover {
+      transform:scale(1.03);
   }
 
-  setInterval(() => CAMS.forEach(refreshOne), PERIOD_MS);
-})();
+  /* ICONOS */
+  .icon-smart {
+      font-size:3rem;
+      margin-bottom:12px;
+      transition:all 0.3s ease;
+  }
+  .icon-on {
+      color:#16a34a !important;
+      filter:drop-shadow(0 0 8px rgba(22,163,74,0.7));
+  }
+  .icon-off {
+      color:#dc2626 !important;
+      opacity:0.7;
+  }
+
+  /* BOTONES SMART */
+  .btn-gpio {
+      width:100%;
+      padding:13px;
+      font-size:1.1rem;
+      border-radius:14px !important;
+      font-weight:bold;
+      transition:all 0.35s ease;
+  }
+  .btn-gpio-on {
+      background:#16a34a !important; color:white !important;
+      box-shadow:0 0 12px rgba(22,163,74,0.9);
+      transform:scale(1.05);
+  }
+  .btn-gpio-off {
+      background:#dc2626 !important; color:white !important;
+      box-shadow:0 0 6px rgba(220,38,38,0.5);
+  }
+
+  /* ALARMA → EFECTO PULSANTE */
+  @keyframes pulse-alert {
+    0%   { box-shadow:0 0 6px rgba(255,0,0,0.5); }
+    50%  { box-shadow:0 0 20px rgba(255,0,0,1); }
+    100% { box-shadow:0 0 6px rgba(255,0,0,0.5); }
+  }
+  .pulse-alert {
+      animation:pulse-alert 1.2s infinite;
+  }
+
+  /* MODO OSCURO */
+  .dark-mode body {
+      background:#0f172a !important; color:#e2e8f0 !important;
+  }
+  .dark-mode .wrapper {
+      background:#1e293b !important;
+  }
+
+  /* BOTÓN DARK MODE */
+  .dark-toggle {
+      position:fixed;
+      bottom:20px; right:20px;
+      background:#0f172a;
+      padding:12px 18px;
+      border-radius:12px;
+      cursor:pointer;
+      color:white;
+      font-size:1.2rem;
+      z-index:1000;
+      box-shadow:0 0 12px rgba(255,255,255,0.25);
+  }
+
+  </style>
+</head>
+
+<body>
+
+<!-- Botón Dark Mode GLOBAL -->
+<div class="dark-toggle" onclick="toggleDarkMode()" role="button" tabindex="0" aria-label="Cambiar modo oscuro">🌙 / ☀️</div>
+
+<div id="page-wrapper">
+  <div class="navbar-smart">
+    <div class="nav-left">
+      <i class="fa-solid fa-house"></i>
+    </div>
+
+    <div class="nav-center">
+      HogarApp
+    </div>
+
+    <div class="nav-links">
+      <a href="#banner" class="nav-link">Inicio</a>
+      <a href="#controles" class="nav-link">Controles</a>
+      <a href="#camaras" class="nav-link">Cámaras</a>
+      <a href="/historicos" class="nav-link">Históricos</a>
+    </div>
+
+    <div class="nav-right">
+      <span id="wsBadge">WS: offline</span>
+      <span id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <section id="banner" class="hero-panel">
+    <div class="inner hero-card">
+      <p class="hero-eyebrow">Panel inteligente</p>
+      <h1>Controles e históricos</h1>
+      <p>Gestioná los controles del hogar y consultá los eventos históricos desde una sola vista.</p>
+      <ul class="actions special">
+        <li><a href="#controles" class="button primary scrolly">Ir a Controles</a></li>
+        <li><a href="/historicos" class="button secondary">Ver Históricos</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="controles" class="wrapper style1 special">
+    <div class="inner">
+      <header class="major">
+        <h2>Controles del Hogar</h2>
+        <p>Activa o desactiva cada módulo con un solo toque.</p>
+      </header>
+
+      <div class="row aln-center controls-grid">
+        <div class="col-6 col-12-medium">
+          <div class="card-smart control-card">
+            <div class="control-card__header">
+              <span class="icon-smart icon-off" id="icon_gpio0">
+                <i class="fa-solid fa-shield-halved"></i>
+              </span>
+              <div class="control-card__title-wrap">
+                <h3>Alarma</h3>
+                <span class="control-card__status">Apagado</span>
+              </div>
+            </div>
+            <div class="control-card__body">
+              <p class="control-card__description">Estado del sistema de alarma</p>
+              <button class="button btn-gpio btn-gpio-off btn-toggle"
+                      aria-pressed="false" onclick="sendGPIO(this,0)">Encender / Apagar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-12-medium">
+          <div class="card-smart control-card">
+            <div class="control-card__header">
+              <span class="icon-smart icon-off" id="icon_gpio2">
+                <i class="fa-solid fa-bolt"></i>
+              </span>
+              <div class="control-card__title-wrap">
+                <h3>Confort</h3>
+                <span class="control-card__status">Apagado</span>
+              </div>
+            </div>
+            <div class="control-card__body">
+              <p class="control-card__description">Modo confort y automatización</p>
+              <button class="button btn-gpio btn-gpio-off btn-toggle"
+                      aria-pressed="false" onclick="sendGPIO(this,1)">Encender / Apagar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-12-medium">
+          <div class="card-smart control-card">
+            <div class="control-card__header">
+              <span class="icon-smart icon-off" id="icon_gpio4">
+                <i class="fa-solid fa-lightbulb"></i>
+              </span>
+              <div class="control-card__title-wrap">
+                <h3>Luces</h3>
+                <span class="control-card__status">Apagado</span>
+              </div>
+            </div>
+            <div class="control-card__body">
+              <p class="control-card__description">Iluminación del entorno</p>
+              <button class="button btn-gpio btn-gpio-off btn-toggle"
+                      aria-pressed="false" onclick="sendGPIO(this,2)">Encender / Apagar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-12-medium">
+          <div class="card-smart control-card">
+            <div class="control-card__header">
+              <span class="icon-smart icon-off" id="icon_gpio5">
+                <i class="fa-solid fa-door-open"></i>
+              </span>
+              <div class="control-card__title-wrap">
+                <h3>Cerrojos</h3>
+                <span class="control-card__status">Apagado</span>
+              </div>
+            </div>
+            <div class="control-card__body">
+              <p class="control-card__description">Control de seguridad y cerraduras</p>
+              <button class="button btn-gpio btn-gpio-off btn-toggle"
+                      aria-pressed="false" onclick="sendGPIO(this,3)">Encender / Apagar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="camaras" class="wrapper alt style2 cameras-section">
+    <div class="inner">
+      <header class="major">
+        <h2>Vigilancia en tiempo real</h2>
+        <p>Visualizá las cámaras disponibles con una vista más limpia y moderna.</p>
+      </header>
+
+      <div class="camera-grid">
+        <article class="camera-card">
+          <div class="image">
+            <img id="cam1" src="/static/imagenes/cam1.jpg" alt="Cámara 1" loading="lazy">
+          </div>
+          <div class="content">
+            <h2>Living</h2>
+            <p>Entrada principal</p>
+          </div>
+        </article>
+
+        <article class="camera-card">
+          <div class="image">
+            <img id="cam2" src="/static/imagenes/cam2.jpg" alt="Cámara 2" loading="lazy">
+          </div>
+          <div class="content">
+            <h2>Patio trasero</h2>
+            <p>Área exterior</p>
+          </div>
+        </article>
+
+        <article class="camera-card">
+          <div class="image">
+            <img id="cam3" src="/static/imagenes/cam3.jpg" alt="Cámara 3" loading="lazy">
+          </div>
+          <div class="content">
+            <h2>Exteriores</h2>
+            <p>Vista de acceso</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta" class="wrapper style4">
+    <div class="inner">
+      <header><h2>Industrias Optofer</h2></header>
+      <p>Automatizando tu hogar desde Raspberry Pi</p>
+    </div>
+  </section>
+</div>
+
+<!-- JS del tema -->
+<script src="/static/assets/js/jquery.min.js"></script>
+<script src="/static/assets/js/jquery.scrolly.min.js"></script>
+<script src="/static/assets/js/main.js"></script>
+
+<!-- ----------------------------- -->
+<!--         JS SMART HOME         -->
+<!-- ----------------------------- -->
+<script>
+
+let ws;
+const GPIO_LIST = ["GPIO0","GPIO2","GPIO4","GPIO5"];
+let buttons, icons;
+
+/* DARK MODE */
+function toggleDarkMode() {
+  document.documentElement.classList.toggle("dark-mode");
+}
+
+/* UI update */
+function updateButtonState(btn, icon, state, pin) {
+  btn.setAttribute("aria-pressed", state ? "true" : "false");
+  btn.classList.remove("btn-gpio-on","btn-gpio-off","pulse-alert");
+  icon.classList.remove("icon-on","icon-off");
+
+  if (state) {
+    btn.classList.add("btn-gpio-on");
+    icon.classList.add("icon-on");
+    if (pin === "GPIO0") btn.classList.add("pulse-alert");
+  } else {
+    btn.classList.add("btn-gpio-off");
+    icon.classList.add("icon-off");
+  }
+}
+
+/* Enviar comando */
+function sendGPIO(btn, idx) {
+  const pin = GPIO_LIST[idx];
+  const icon = icons[idx];
+  const pressed = btn.getAttribute("aria-pressed") === "true";
+  const newState = pressed ? 0 : 1;
+
+  updateButtonState(btn, icon, newState, pin);
+
+  ws.send(JSON.stringify({type:"set", pin, state:newState}));
+}
+
+/* Aplicar estados desde backend */
+function applyStates(states) {
+  buttons.forEach((btn,idx)=>{
+    const pin = GPIO_LIST[idx];
+    const value = states[pin];
+    updateButtonState(btn, icons[idx], value, pin);
+  });
+}
+
+/* Cámaras: refresco */
+setInterval(()=>{
+  ["cam1","cam2","cam3"].forEach(id=>{
+    const el = document.getElementById(id);
+    el.src = el.src.split("?")[0] + "?t=" + Date.now();
+  });
+}, 1500);
+
+/* WebSocket */
+function initWS() {
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws`);
+
+  const badge = document.getElementById("wsBadge");
+
+  ws.onopen = () => {
+    badge.textContent = "WS: online";
+    badge.classList.add("ws-ok");
+    badge.classList.remove("ws-err");
+  };
+
+  ws.onclose = () => {
+    badge.textContent = "WS: offline";
+    badge.classList.add("ws-err");
+    badge.classList.remove("ws-ok");
+    setTimeout(initWS,2000);
+  };
+
+  ws.onmessage = (msg)=>{
+    const data = JSON.parse(msg.data);
+    if (data.type === "init" || data.type === "update") applyStates(data.states);
+  };
+}
+
+/* DOM READY */
+document.addEventListener("DOMContentLoaded",()=>{
+  buttons = Array.from(document.querySelectorAll(".btn-toggle"));
+  icons = GPIO_LIST.map(pin => document.getElementById(`icon_${pin.toLowerCase()}`));
+  initWS();
+});
+
 </script>
 
+<script>
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const s = now.getSeconds().toString().padStart(2,'0');
+  document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
 
 
 </body>

@@ -17,7 +17,8 @@ from gpiozero import LED
 
 
 # Routers
-from routers import user_routes, raw_routes
+from routers import user_routes, raw_routes, eventos, historicos_routes
+from database.historicos import init_db
 # Si tenés más routers:
 # from routers import eventos, nuevo_raw_route, viejo_raw_routes
 
@@ -91,10 +92,14 @@ for _, path in carpetas.items():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         Image.new("RGB", (320, 240), (0, 0, 0)).save(path, "JPEG")
 
+# ---------- BASE DE HISTÓRICOS ----------
+init_db()
+
 # ---------- ROUTERS (quedan protegidos por la dependencia global) ----------
 app.include_router(user_routes.router)
 app.include_router(raw_routes.router)
 app.include_router(eventos.router)
+app.include_router(historicos_routes.router)
 
 # ---------- DOCS PROTEGIDOS ----------
 @app.get("/openapi.json", response_class=JSONResponse)
